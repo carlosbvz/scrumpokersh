@@ -1,0 +1,13 @@
+.input-trans {
+    border: none;
+    background: transparent;
+    color: white;
+    outline: none;
+}
+.input-trans:focus {
+    background: #3b424e;
+    color: white;
+}
+p {
+    outline: none;
+}

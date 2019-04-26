@@ -1,0 +1,7 @@
+.players-panel .list-group-item.active {
+    font-size: 22px;
+    font-weight: bold;
+}
+.players-panel .list-group-item:not(.active) {
+    color: black;
+}

@@ -1,0 +1,36 @@
+.game-card--external {
+    width: 120px;
+    height: 150px;
+    cursor: pointer;
+    color: black;
+}
+.game-card--external .card-body {
+    display: flex;
+    justify-content: center;
+    padding: 1.55rem;
+}
+.game-card--external p {
+    margin: 0;
+}
+.game-card--up,
+.game-card--down{
+    position: absolute;
+}
+.game-card--up {
+    top: 5px;
+    left: 5px;
+}
+.game-card--down {
+    bottom: 5px;
+    right: 5px;
+}
+
+
+.game-card--internal {
+    width: 100%;
+}
+.game-card--internal .card-body {
+    display: flex;
+    align-items: center;
+    font-size: 32px;
+}
