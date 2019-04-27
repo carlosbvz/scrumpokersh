@@ -1,21 +1,18 @@
 const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const { socketsHandler } = require('./controllers/socketController');
 
 const API_PORT = 3001;
-const app = express();
-app.use(cors());
 
-app.get('/data',function(req,res) {
+app.get('/api',function(req,res) {
     res.json('index.html');
 });
 
-
-// (optional) only made for logging and
-// bodyParser, parses the request body to be a readable json format
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
+io.on('connection', socketsHandler);
 
 // launch our backend into a port
-app.listen(API_PORT, () => console.log(`LISTENING ON PORT ${API_PORT}`));
+http.listen(API_PORT, function(){
+    console.log(`listening on *:${API_PORT}`);
+});

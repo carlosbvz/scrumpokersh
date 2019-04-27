@@ -17,6 +17,7 @@ class LoginPage extends React.Component {
     startGame(userName) {
         if (userName) {
             localStorage.setItem('pockerUserName', userName);
+            window.socket.emit('add player', userName);
             this.props.history.push('/scrum-pocker');
         }
     }

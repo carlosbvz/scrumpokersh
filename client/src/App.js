@@ -16,6 +16,7 @@ class App extends React.Component {
         <Container fluid>
           <Route exact path="/" component={LoginPage}></Route>
           <Route exact path="/scrum-pocker" component={ScrumPocker}></Route>
+          <Route path='/scrum-pocker/admin' render={(props) => <ScrumPocker {...props} isAdmin={true} />} />          
         </Container>
       </Router>
     )

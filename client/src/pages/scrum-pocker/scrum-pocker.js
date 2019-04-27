@@ -20,7 +20,7 @@ class ScrumPocker extends React.Component {
     }
 
     state = {
-        isAdmin: true,
+        isAdmin: this.props.isAdmin,
         userName: null,
         currentUserStory: null,
         userStories: [],
@@ -34,10 +34,16 @@ class ScrumPocker extends React.Component {
     componentDidMount() {
         this.setUserName();
         this.setPlayers();
-        fetch('/data')
+        fetch('/api')
             .then(response => response.json())
             .then(data => {
                 console.log(data)
+        });
+        window.socket.on('user story from server', (userStory) => { 
+            this.setState({currentUserStory: userStory}) 
+        });
+        window.socket.on('player added', (playerName) => { 
+            console.log(playerName)
         });
     }
     setUserName() {
@@ -74,6 +80,7 @@ class ScrumPocker extends React.Component {
     onUserStoryChange(event) {
         this.setState({ userStoryFieldHeight: event.target.scrollHeight });
         this.setState({ currentUserStory: event.target.value });
+        window.socket.emit('send user story', event.target.value);
     }
     requestEstimates() {
         this.setState({isRequestingEstimates: !this.state.isRequestingEstimates});
@@ -124,7 +131,7 @@ class ScrumPocker extends React.Component {
                         <Row>
                             <Col >
                                 <h3>User Story:</h3>
-                                <p>This is my User Story</p>
+                                <p>{this.state.currentUserStory || 'No user Story added yet'}</p>
                             </Col>
                         </Row>
 
