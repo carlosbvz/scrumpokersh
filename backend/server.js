@@ -3,12 +3,11 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const { socketsHandler } = require('./controllers/socketController');
+const apiRoutes = require('./routes/apiRoutes');
 
 const API_PORT = 3001;
 
-app.get('/api',function(req,res) {
-    res.json('index.html');
-});
+app.use('/api', apiRoutes);
 
 io.on('connection', socketsHandler);
 

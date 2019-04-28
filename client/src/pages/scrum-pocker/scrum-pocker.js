@@ -28,23 +28,23 @@ class ScrumPocker extends React.Component {
         cardsNumbers: ['0', '1/2', '1', '2', '3', '5', '8', '13', '21', '20', '40'],
         selectedCardIndex: [],
         userStoryFieldHeight: null,
-        isRequestingEstimates: false
+        isRequestingEstimates: false,
+        isGetPlayersIntervalSet: false
     }
 
     componentDidMount() {
         this.setUserName();
         this.setPlayers();
-        fetch('/api')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-        });
+
         window.socket.on('user story from server', (userStory) => { 
             this.setState({currentUserStory: userStory}) 
         });
-        window.socket.on('player added', (playerName) => { 
-            console.log(playerName)
-        });
+    }
+    componentWillUnmount() {
+        if (this.state.isGetPlayersIntervalSet) {
+            clearInterval(this.state.isGetPlayersIntervalSet);
+            this.setState({ isGetPlayersIntervalSet: null });
+          }
     }
     setUserName() {
         const userName = localStorage.getItem('pockerUserName');
@@ -55,8 +55,19 @@ class ScrumPocker extends React.Component {
         }
     }
     setPlayers() {
-        // TODO: Get list from node
-        this.setState({ players: ['Charlie', 'Jose'] })
+        this.getPlayersFromDB();
+        if (!this.state.isGetPlayersIntervalSet) {
+            let interval = setInterval(this.getPlayersFromDB, 1000);
+            this.setState({ isGetPlayersIntervalSet: interval });
+        }
+    }
+    getPlayersFromDB() {
+        fetch('/api/get/players')
+            .then(response => response.json())
+            .then(players => {
+                console.log(players)
+                // this.setState({players})
+        });
     }
     onUsernameChange(userName) {
         this.setState({ userName });
