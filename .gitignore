@@ -1,2 +1,3 @@
 node_modules
 aws-scrumpocker-ssh-key.pem
+client/build
