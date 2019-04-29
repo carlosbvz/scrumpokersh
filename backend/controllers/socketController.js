@@ -54,6 +54,9 @@ const socketsHandler = (socket) => {
     socket.on('send user story', (userStory) => {
         socket.broadcast.emit('user story from server', userStory);
     });
+    socket.on('clear estimates', () => {
+        socket.broadcast.emit('clear current estimate');
+    });
 }
 
 module.exports = {

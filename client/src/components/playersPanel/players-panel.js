@@ -12,10 +12,7 @@ class PlayersPanel extends React.Component {
     }
 
     getAdminControllers(playerId) {
-        return (<a href="#" title="Remove this dude"> 
-                <FaTrashO color="red" 
-                    onClick={e => this.onDeletePlayer(playerId)}/>
-                </a>) 
+        return <FaTrashO color="red" onClick={e => this.onDeletePlayer(playerId)}/> 
     }
     onDeletePlayer(playerId) {
         this.props.deletePlayer(playerId);

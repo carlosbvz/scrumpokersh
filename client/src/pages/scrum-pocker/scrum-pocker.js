@@ -3,7 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import Header from '../../components/header/header';
 import PlayersPanel from '../../components/playersPanel/players-panel';
 import GameCard from '../../components/game-card/game-card';
-import { Button, Form } from 'react-bootstrap';
+import { Button, ButtonGroup, Form } from 'react-bootstrap';
 import axios from "axios";
 import './scrum-pocker.css';
 
@@ -18,6 +18,7 @@ class ScrumPocker extends React.Component {
         this.toggleEstimates = this.toggleEstimates.bind(this);
         this.getPlayersFromDB = this.getPlayersFromDB.bind(this);
         this.logout = this.logout.bind(this);
+        this.clearEstimates = this.clearEstimates.bind(this);
     }
 
     state = {
@@ -30,7 +31,8 @@ class ScrumPocker extends React.Component {
         selectedCardIndex: [],
         userStoryFieldHeight: null,
         shouldDisplayEstimates: false,
-        isGetPlayersIntervalSet: false
+        isGetPlayersIntervalSet: false,
+        isClearingEstimates: false
     }
 
     componentDidMount() {
@@ -42,6 +44,9 @@ class ScrumPocker extends React.Component {
             if (!this.state.isAdmin) window.socket.emit('add player', { name: userName, id: userId, score: null });
             window.socket.on('user story from server', (userStory) => {
                 this.setState({ currentUserStory: userStory })
+            });
+            window.socket.on('clear current estimate', () => {
+                this.onCardClick();
             });
         } else {
             this.props.history.push('/');
@@ -76,7 +81,7 @@ class ScrumPocker extends React.Component {
             name: userName
         });
     }
-    onCardClick(cardIndex, cardNumber) {
+    onCardClick(cardIndex = null, cardNumber = null) {
         const selectedCardIndex = [];
         selectedCardIndex[cardIndex] = true;
         this.setState({ selectedCardIndex });
@@ -113,10 +118,19 @@ class ScrumPocker extends React.Component {
         this.setState({ shouldDisplayEstimates: !this.state.shouldDisplayEstimates });
     }
     clearEstimates() {
-        console.log('clearing estimates');
-        axios.post('/api/delete/estimates', {
-            id: []
-        });
+        console.log(this.state.isClearingEstimates)
+        if (this.state.isClearingEstimates) {
+            axios.post('/api/delete/estimates', {
+                id: []
+            });
+            this.setState({isClearingEstimates: false})
+            window.socket.emit('clear estimates');
+        } else {
+            this.setState({isClearingEstimates: true});
+            setTimeout( () => {
+                this.setState({isClearingEstimates: false})
+            }, 4000);
+        }
     }
     getMainPanel() {
         if (this.state.isAdmin) {
@@ -150,7 +164,10 @@ class ScrumPocker extends React.Component {
                                     
                                 </Col>
                                 <Col xs={6}>
-                                    <Button block variant="danger" onClick={this.clearEstimates}>Clear</Button>
+                                
+                                    <Button block variant="danger" onClick={this.clearEstimates}>
+                                        {this.state.isClearingEstimates ? 'Are you Sure?' : 'Clear' }</Button>
+                                
                                 </Col>
                             </Row>
                             <br />
@@ -169,6 +186,11 @@ class ScrumPocker extends React.Component {
                             </Col>
                         </Row>
 
+                        <Row>
+                            <Col>
+                                <Button onClick={this.onCardClick}>Clear</Button>
+                            </Col>
+                        </Row>
                         <Row>
                             <Col className="cards-section">
                                 {this.getCards()}
