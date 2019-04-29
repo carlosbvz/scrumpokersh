@@ -36,7 +36,7 @@ class ScrumPocker extends React.Component {
     componentDidMount() {
         const userName = localStorage.getItem('pockerUserName');
         const userId = localStorage.getItem('pockerUserId');
-        if (userName) { // Game starts
+        if (userName || this.state.isAdmin) { // Game starts
             this.setState({ userName, userId });
             this.setPlayers();
             if (!this.state.isAdmin) window.socket.emit('add player', { name: userName, id: userId, score: null });
@@ -175,7 +175,7 @@ class ScrumPocker extends React.Component {
     render() {
         return (
             <div>
-                <Header handleUserNameChange={this.onUsernameChange} userName={this.state.userName} />
+                <Header handleUserNameChange={this.onUsernameChange} isAdmin={this.state.isAdmin} userName={this.state.userName} />
                 {this.getMainPanel()}
             </div>
         )

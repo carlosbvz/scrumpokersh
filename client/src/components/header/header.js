@@ -15,15 +15,20 @@ class Header extends React.Component {
         return (
             <div className="header">
                 <h1>ScrumPockersh</h1>
-                <Form>
-                    <Form.Group controlId="formUserName">
-                        <Form.Control className="input-trans" as="textarea" rows="1" 
-                                    value={this.props.userName || ''}
-                                    onChange={e => this.updateUserName(e.target.value)}
-                                    onBlur={e => this.restoreUserName(e.target.value)}
-                                    />
-                    </Form.Group>
-                </Form>
+                {!this.props.isAdmin ?
+                    <Form>
+                        <Form.Group controlId="formUserName">
+                            <Form.Control className="input-trans" as="textarea" rows="1" 
+                                        value={this.props.userName || ''}
+                                        onChange={e => this.updateUserName(e.target.value)}
+                                        onBlur={e => this.restoreUserName(e.target.value)}
+                                        />
+                        </Form.Group>
+                    </Form>
+                    :
+                    null
+                }
+                
             </div>
         )
     }
