@@ -3,10 +3,7 @@ function Player(data = {}) {
     this.id = data.id;
     this.name = data.name;
     this.score = data.score || null;
-    this.shouldDisconnect = false;
-}
-Player.prototype.setDisconnection = function() {
-    return this.shouldDisconnect;
+    this.socket = data.socket;
 }
 
 const playersHandler = {
@@ -18,10 +15,17 @@ const playersHandler = {
         });
         if (shouldAddNewPlayer) this.players.push(newPlayer);
     },
-    removeById(playerId) {
+    deleteById(playerId) {
         this.players = this.players.filter( player => {
             return player.id !== playerId;
-        });
+        }); 
+    },
+    deleteEstimates() {
+        console.log('clearing estimates')
+        this.players = this.players.map( player => {
+            player.score = null;
+            return player;
+        }); 
     },
     update(updatedPlayer) {
         this.players = this.players.map( player => {
@@ -44,8 +48,8 @@ const socketsHandler = (socket) => {
         console.log('user disconnected with playerId: ');
     });
     socket.on('add player', (playerData) => {
-        playersHandler.add(new Player(playerData));
-        socket.playerId = playerData.id;
+        const newPlayer = new Player(playerData);
+        playersHandler.add(newPlayer);
     });
     socket.on('send user story', (userStory) => {
         socket.broadcast.emit('user story from server', userStory);

@@ -9,6 +9,16 @@ router.post('/update/player', (req, res) => {
     playersHandler.update({id, name, score});
     return res.json({ success: true });
 });
+router.post('/delete/player', (req, res) => {
+    const { id } = req.body;
+    playersHandler.deleteById(id);
+    return res.json({ success: true });
+});
+router.post('/delete/estimates', (req, res) => {
+    playersHandler.deleteEstimates();
+    return res.json({ success: true });
+});
+
 
 
 module.exports = router;

@@ -62,10 +62,10 @@ class ScrumPocker extends React.Component {
         }
     }
     getPlayersFromDB() {
-        fetch('/api/get/players')
-            .then(response => response.json())
+        axios.get('/api/get/players')
             .then(playersData => {
-                this.setState({ players: JSON.parse(playersData.data) })
+                console.log(playersData.data.data)
+                this.setState({ players: JSON.parse(playersData.data.data) })
             });
     }
     onUsernameChange(userName) {
@@ -90,7 +90,11 @@ class ScrumPocker extends React.Component {
         localStorage.clear();
         this.props.history.push('/');
     }
-
+    onDeletePlayer(playerId) {
+        axios.post('/api/delete/player', {
+            id: playerId
+        });
+    }
     getCards() {
         return this.state.cardsNumbers.map((card, index) => {
             return <GameCard key={index}
@@ -107,6 +111,12 @@ class ScrumPocker extends React.Component {
     }
     toggleEstimates() {
         this.setState({ shouldDisplayEstimates: !this.state.shouldDisplayEstimates });
+    }
+    clearEstimates() {
+        console.log('clearing estimates');
+        axios.post('/api/delete/estimates', {
+            id: []
+        });
     }
     getMainPanel() {
         if (this.state.isAdmin) {
@@ -132,17 +142,19 @@ class ScrumPocker extends React.Component {
                             </Row>
                         </Col>
                         <Col xs={4}>
-
                             <Row>
                                 <Col xs={6}>
-                                    <Button block variant="primary" disabled={!this.state.shouldDisplayEstimates} onClick={this.toggleEstimates} >Hide Estimates</Button>
+                                    {this.state.shouldDisplayEstimates ? 
+                                        <Button block variant="primary" onClick={this.toggleEstimates} >Hide Estimates</Button> 
+                                        : <Button block variant="primary" onClick={this.toggleEstimates} >Show Estimates</Button>}
+                                    
                                 </Col>
                                 <Col xs={6}>
-                                    <Button block variant="primary" disabled={this.state.shouldDisplayEstimates} onClick={this.toggleEstimates} >Show Estimates</Button>
+                                    <Button block variant="danger" onClick={this.clearEstimates}>Clear</Button>
                                 </Col>
                             </Row>
                             <br />
-                            <PlayersPanel players={this.state.players} isAdmin={this.state.isAdmin} shouldDisplayEstimates={this.state.shouldDisplayEstimates}/>
+                            <PlayersPanel players={this.state.players} isAdmin={this.state.isAdmin} shouldDisplayEstimates={this.state.shouldDisplayEstimates} deletePlayer={this.onDeletePlayer}/>
                         </Col>
                     </Row>
                 </div>)
@@ -175,7 +187,7 @@ class ScrumPocker extends React.Component {
     render() {
         return (
             <div>
-                <Header handleUserNameChange={this.onUsernameChange} isAdmin={this.state.isAdmin} userName={this.state.userName} />
+                <Header handleUserNameChange={this.onUsernameChange} isAdmin={this.state.isAdmin} userName={this.state.userName}/>
                 {this.getMainPanel()}
             </div>
         )
