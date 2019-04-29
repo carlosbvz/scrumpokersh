@@ -1,42 +1,51 @@
 // Players Structure
-function Players(data) {
+function Player(data = {}) {
+    this.id = data.id;
     this.name = data.name;
-    this.socket = data.socket || null;
     this.score = data.score || null;
+    this.shouldDisconnect = false;
+}
+Player.prototype.setDisconnection = function() {
+    return this.shouldDisconnect;
 }
 
 const playersHandler = {
     players: [],
-    addPlayer(player) {
-        this.players.push(player)
+    add(newPlayer) {
+        let shouldAddNewPlayer = true;
+        this.players.map( player => {
+            if (player.id === newPlayer.id) shouldAddNewPlayer = false;
+        });
+        if (shouldAddNewPlayer) this.players.push(newPlayer);
     },
-    findPlayerBySocketId(socketId) {
-        return this.players.filter( player => {
-            console.log(player.socket.id)
+    removeById(playerId) {
+        this.players = this.players.filter( player => {
+            return player.id !== playerId;
         });
     },
-    removePlayer(socketId) {
-
-    },
-    getPlayers() {
-        return this.players.map(player => {
-            return {
-                    id: player.socket.id,
-                    name: player.name,
-                    score: player.score
-                };
+    update(updatedPlayer) {
+        this.players = this.players.map( player => {
+            if (player.id === updatedPlayer.id) return Object.assign(player,updatedPlayer);
+            else return player;
         });
+    },
+    getById(id) {
+        return this.players.find(player => player.id === id);
+    },
+    getAll() {
+        return this.players;
     }
 };
 
 const socketsHandler = (socket) => {
-    console.log('an user connected');
+    console.log('an user connected with socketid: ');
     
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        console.log('user disconnected with playerId: ');
     });
-    socket.on('add player', (playerName) => {
-        playersHandler.addPlayer(new Players({name: playerName, socket}));
+    socket.on('add player', (playerData) => {
+        playersHandler.add(new Player(playerData));
+        socket.playerId = playerData.id;
     });
     socket.on('send user story', (userStory) => {
         socket.broadcast.emit('user story from server', userStory);

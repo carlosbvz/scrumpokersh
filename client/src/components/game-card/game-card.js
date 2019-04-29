@@ -4,8 +4,8 @@ import './game-card.css';
 
 class GameCard extends React.Component {
 
-    onCardClick(cardNumber) {
-        this.props.handleCardClick(cardNumber);
+    onCardClick(index, number) {
+        this.props.handleCardClick(index, number);
     }
 
     render() {
@@ -13,7 +13,7 @@ class GameCard extends React.Component {
             <Card bg={ this.props.isCardSelected ? 'primary' : '' } 
                   text={this.props.isCardSelected ? 'white': ''} 
                   className="game-card--external"
-                  onClick={e => this.onCardClick(this.props.index)}>
+                  onClick={e => this.onCardClick(this.props.index, this.props.number)}>
                 <p className="game-card--up">{this.props.number}</p>
                 <Card.Body>
                        
