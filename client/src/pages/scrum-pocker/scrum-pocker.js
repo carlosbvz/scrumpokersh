@@ -67,7 +67,7 @@ class ScrumPocker extends React.Component {
         }
     }
     getPlayersFromDB() {
-        axios.get('http://18.216.189.159:3001/api/get/players')
+        axios.get('/api/get/players')
             .then(playersData => {
                 console.log(playersData.data.data)
                 this.setState({ players: JSON.parse(playersData.data.data) })
@@ -76,7 +76,7 @@ class ScrumPocker extends React.Component {
     onUsernameChange(userName) {
         this.setState({ userName });
         if (userName) localStorage.setItem('pockerUserName', userName);
-        axios.post('http://18.216.189.159:3001/api/update/player', {
+        axios.post('/api/update/player', {
             id: this.state.userId,
             name: userName
         });
@@ -85,7 +85,7 @@ class ScrumPocker extends React.Component {
         const selectedCardIndex = [];
         selectedCardIndex[cardIndex] = true;
         this.setState({ selectedCardIndex });
-        axios.post('http://18.216.189.159:3001/api/update/player', {
+        axios.post('/api/update/player', {
             id: this.state.userId,
             name: this.state.userName,
             score: cardNumber
@@ -96,7 +96,7 @@ class ScrumPocker extends React.Component {
         this.props.history.push('/');
     }
     onDeletePlayer(playerId) {
-        axios.post('http://18.216.189.159:3001/api/delete/player', {
+        axios.post('/api/delete/player', {
             id: playerId
         });
     }
@@ -120,7 +120,7 @@ class ScrumPocker extends React.Component {
     clearEstimates() {
         console.log(this.state.isClearingEstimates)
         if (this.state.isClearingEstimates) {
-            axios.post('http://18.216.189.159:3001/api/delete/estimates', {
+            axios.post('/api/delete/estimates', {
                 id: []
             });
             this.setState({isClearingEstimates: false})
